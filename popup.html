@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Stock Chart</title>
+  <style>
+    body {
+      width: 450px; /* 少し幅を広げます */
+      padding: 10px;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+    .inputArea {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .textInput {
+      flex-grow: 1;
+      padding: 8px;
+      margin-right: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .button {
+      padding: 8px 12px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+    #apiKeyArea {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 3px;
+      border: 1px solid #eee;
+    }
+    #apiKeyArea p {
+      margin: 0 0 10px 0;
+      font-size: 0.9em;
+    }
+    .apiKeyInput {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+    #saveApiKeyButton {
+      width: 100%;
+      background-color: #28a745;
+    }
+    #saveApiKeyButton:hover {
+      background-color: #218838;
+    }
+    #codeListContainer {
+        margin-bottom: 15px;
+    }
+    #codeList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 100px; /* リストが多くなった場合にスクロール */
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 3px;
+    }
+    #codeList li {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #codeList li:last-child {
+      border-bottom: none;
+    }
+    .removeButton {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 3px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.8em;
+    }
+    .removeButton:hover {
+      background-color: #c82333;
+    }
+    #chartContainer {
+      width: 100%;
+      height: 300px;
+      border: 1px solid #eee; /* チャートエリアを視覚的に区切る */
+      position: relative; /* ローディング表示用 */
+    }
+    #loadingIndicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none; /* 初期状態は非表示 */
+        font-style: italic;
+        color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stock Chart Viewer</h1>
+  
+  <div id="apiKeyArea">
+    <p>Alpha Vantage APIキーを入力してください。<a href="https://www.alphavantage.co/support/#api-key" target="_blank">取得方法</a></p>
+    <input type="text" id="apiKeyInput" class="textInput apiKeyInput" placeholder="Alpha Vantage APIキーを入力">
+    <button id="saveApiKeyButton" class="button">APIキーを保存</button>
+  </div>
+  
+  <div class="inputArea" id="inputArea">
+    <input type="text" id="stockCodeInput" class="textInput" placeholder="Enter stock code (e.g., 7203, AAPL)">
+    <button id="addCodeButton" class="button">Add</button>
+  </div>
+
+  <div id="codeListContainer">
+    <ul id="codeList">
+      <!-- Added stock codes will appear here -->
+    </ul>
+  </div>
+
+  <div id="chartContainer">
+    <canvas id="stockChart"></canvas>
+    <div id="loadingIndicator">Loading chart...</div>
+  </div>
+
+  <!-- ローカルのChart.jsとその依存関係を読み込む -->
+  <script src="node_modules/chart.js/dist/chart.umd.js"></script>
+  <script src="node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

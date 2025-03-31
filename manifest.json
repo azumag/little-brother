@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "little-brother",
+  "version": "1.0",
+  "description": "Displays stock charts and prices.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://www.alphavantage.co/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Little Brother"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [ "node_modules/chart.js/dist/chart.umd.js", "node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js" ],
+      "matches": [ "<all_urls>" ],
+      "extension_ids": []
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}
