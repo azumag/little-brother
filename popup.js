@@ -19,16 +19,22 @@ document.addEventListener('DOMContentLoaded', function() {
   function loadApiKey() {
     chrome.runtime.sendMessage({ action: 'getApiKey' }, function(response) {
       if (response && response.success) {
-        apiKey = response.apiKey;
+        apiKey = response.apiKey || ''; // APIキーがない場合は空文字を設定
         apiKeyInput.value = apiKey;
-        
-        // APIキーが設定されていれば株価データを読み込む
-        if (apiKey) {
-          loadCodesFromStorage();
-        } else {
-          // APIキーが設定されていない場合は警告を表示
+
+        // 先にストレージからコードを読み込む
+        loadCodesFromStorage();
+
+        // APIキーがない場合は警告を表示
+        if (!apiKey) {
           alert('Alpha Vantage APIキーを設定してください。');
         }
+        // APIキーがある場合は、コード読み込み後にチャートをロード
+        // (loadCodesFromStorage内でチャートロードが呼ばれる)
+      } else {
+        // エラーの場合やレスポンスがない場合もコードは読み込む
+        loadCodesFromStorage();
+        alert('APIキーの取得に失敗しました。');
       }
     });
   }
@@ -55,19 +61,19 @@ document.addEventListener('DOMContentLoaded', function() {
   // ストレージからコードを読み込む
   function loadCodesFromStorage() {
     chrome.storage.local.get(['stockCodes'], function(result) {
+      // ストレージにデータがあり、それが配列の場合
       if (result.stockCodes && Array.isArray(result.stockCodes)) {
-                
-        // コードが変更された場合は保存し直す
-        if (JSON.stringify(stockCodes) !== JSON.stringify(result.stockCodes)) {
-          saveCodesToStorage();
-        }
-        
-        renderCodeList();
-        
-        // APIキーが設定されていれば株価データを読み込む
-        if (apiKey) {
-          loadAndRenderChart(); // 保存されているコードでチャートを初期表示
-        }
+        stockCodes = result.stockCodes; // 読み込んだコードを代入
+      } else {
+        // ストレージにデータがない、または形式が不正な場合は空にする
+        stockCodes = [];
+      }
+
+      renderCodeList(); // UIにリストを描画
+
+      // APIキーが設定されていれば株価データを読み込む
+      if (apiKey) {
+        loadAndRenderChart(); // 保存されているコードでチャートを初期表示
       }
     });
   }
